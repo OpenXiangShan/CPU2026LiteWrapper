@@ -1,0 +1,4 @@
+$APP --stats-file=run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.stats.txt run_riscv_boot.py o3    10 --max-ticks 10_000_000_000 > run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.out 2> run_riscv_boot.py_o3_10_--max-ticks_10_000_000_000.err
+$APP --stats-file=run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.stats.txt run_riscv_boot.py timing 4 --max-ticks 20_000_000_000 > run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.out 2> run_riscv_boot.py_timing_4_--max-ticks_20_000_000_000.err
+$APP --stats-file=synthetic_traffic.py_LinearGenerator_21.stats.txt synthetic_traffic.py LinearGenerator 21 > synthetic_traffic.py_LinearGenerator_21.out 2> synthetic_traffic.py_LinearGenerator_21.err
+$APP --stats-file=synthetic_traffic.py_LinearGenerator_74_--ruby.stats.txt synthetic_traffic.py LinearGenerator 74 --ruby > synthetic_traffic.py_LinearGenerator_74_--ruby.out 2> synthetic_traffic.py_LinearGenerator_74_--ruby.err

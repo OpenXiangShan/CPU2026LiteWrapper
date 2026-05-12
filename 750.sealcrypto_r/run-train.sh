@@ -1,0 +1,1 @@
+$APP train australia_state_capitals_train.csv Victoria > homoencrypt.train_australia_state_capitals_train.csv_Victoria.out 2> homoencrypt.train_australia_state_capitals_train.csv_Victoria.err

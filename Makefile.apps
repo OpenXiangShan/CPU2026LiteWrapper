@@ -1,0 +1,273 @@
+SPEC ?=
+#include $(SPEC_LITE)/scripts/$(ARCH).mk
+
+WORK_DIR = .
+DST_DIR = $(WORK_DIR)/build$(TAG)
+HOST_DIR = $(WORK_DIR)/host
+RUN_DIR = $(WORK_DIR)/run$(RUN_TAG)
+$(shell mkdir -p $(DST_DIR))
+
+### Files to be linked: object files (`.o`) and libraries (`.a`)
+OBJS := $(patsubst %.F,%.fppized.o,$(SRCS))
+OBJS := $(patsubst %.F90,%.fppized.o,$(OBJS))
+OBJS := $(patsubst %.f90,%.o,$(OBJS))
+OBJS := $(patsubst %.f,%.o,$(OBJS))
+OBJS := $(patsubst %.c,%.o,$(OBJS))
+OBJS := $(patsubst %.C,%.o,$(OBJS))
+OBJS := $(patsubst %.cpp,%.o,$(OBJS))
+OBJS := $(patsubst %.cc,%.o,$(OBJS))
+OBJS := $(patsubst %.cxx,%.o,$(OBJS))
+OBJS := $(addprefix $(DST_DIR)/, $(OBJS))
+
+PREPROCESS_OBJS = $(filter %.F,$(SRCS))
+PREPROCESS_OBJS += $(filter %.F90,$(SRCS))
+PREPROCESS_OBJS := $(patsubst %.F,%.fppized.f, $(PREPROCESS_OBJS))
+PREPROCESS_OBJS := $(patsubst %.F90,%.fppized.f90, $(PREPROCESS_OBJS))
+
+VALIDATOR_OBJS := $(patsubst %.F,%.fppized.o,$(VALIDATOR_SRCS))
+VALIDATOR_OBJS := $(patsubst %.F90,%.fppized.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.f90,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.f,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.c,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.C,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.cpp,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.cc,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(patsubst %.cxx,%.o,$(VALIDATOR_OBJS))
+VALIDATOR_OBJS := $(addprefix $(HOST_DIR)/, $(VALIDATOR_OBJS))
+
+DATAPREPARE_OBJS := $(patsubst %.F,%.fppized.o,$(DATAPREPARE_SRCS))
+DATAPREPARE_OBJS := $(patsubst %.F90,%.fppized.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.f90,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.f,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.c,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.C,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.cpp,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.cc,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(patsubst %.cxx,%.o,$(DATAPREPARE_OBJS))
+DATAPREPARE_OBJS := $(addprefix $(HOST_DIR)/, $(DATAPREPARE_OBJS))
+
+CROSS_COMPILE ?=
+CC  = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+FC  = $(CROSS_COMPILE)gfortran
+ifeq ($(LD_FORTRAN),1)
+LD = $(FC)
+else ifeq ($(LD_CXX),1)
+LD = $(CXX)
+else
+LD = $(CC)
+endif
+
+HOST_CC = $(HOST)gcc
+HOST_CXX = $(HOST)g++
+HOST_FC = $(HOST)gfortran
+ifeq ($(LD_FORTRAN),1)
+HOST_LD = $(HOST_FC)
+else ifeq ($(LD_CXX),1)
+HOST_LD = $(HOST_CXX)
+else
+HOST_LD = $(HOST_CC)
+endif
+
+OBJDUMP = $(CROSS_COMPILE)objdump
+OBJCOPY = $(CROSS_COMPILE)objcopy
+READELF = $(CROSS_COMPILE)readelf
+
+OPTIMIZE ?= -O3
+COPTIMIZE_FLAGS = $(OPTIMIZE)
+CXXOPTIMIZE_FLAGS = $(OPTIMIZE)
+FPPTIMIZE_FLAGS = $(OPTIMIZE)
+BASE_CFLAGS   += -std=gnu17 -DSPEC -DSPEC_LINUX_X64 -DSPEC_LINUX -DNDEBUG -MMD -fno-strict-aliasing -Wno-implicit-int -Wno-int-conversion -Wno-incompatible-pointer-types -Wno-implicit-function-declaration $(SPECIFIC_FLAG) 
+BASE_CXXFLAGS += $(CFLAGS) -std=c++17
+ifeq (,$(findstring flang, $(FC)))
+BASE_FFLAGS  += -fallow-argument-mismatch
+endif
+BASE_FFLAGS  += -DSPEC -DNDEBUG -DSPEC_AUTO_SUPPRESS_OPENMP -DSPEC_LP64 -DSPEC_LINUX $(SPECIFIC_FLAG)
+SPECCPPFLAGS += -DSPEC -DNDEBUG -DSPEC_AUTO_SUPPRESS_OPENMP -DSPEC_LP64
+BASE_LDFLAGS  +=
+
+ifeq ($(LD_FORTRAN),1)
+BASE_LDFLAGS += $(BASE_FFLAGS)
+else ifeq ($(LD_CXX),1)
+BASE_LDFLAGS += $(BASE_CXXFLAGS)
+else
+BASE_LDFLAGS += $(BASE_CFLAGS)
+endif
+
+CFLAGS += $(BASE_CFLAGS) $(SPEC_CFLAGS)
+CXXFLAGS += $(BASE_CXXFLAGS) $(SPEC_CXXFLAGS)
+FFLAGS += $(BASE_FFLAGS) $(SPEC_FFLAGS)
+LDFLAGS += $(BASE_LDFLAGS) $(SPEC_LDFLAGS)
+
+HOST_OPTIMIZE ?= -O2
+
+HOST_CFLAGS += $(CFLAGS) $(HOST_OPTIMIZE)
+HOST_CXXFLAGS += $(CXXFLAGS) $(HOST_OPTIMIZE)
+HOST_FFLAGS += $(FFLAGS) $(HOST_OPTIMIZE)
+HOST_LDFLAGS += $(LDFLAGS) $(HOST_OPTIMIZE)
+# Do not add OPTIMIZE to HOST_CFLAGS, HOST_CXXFLAGS, HOST_FFLAGS 
+# and HOST_LDFLAGS.
+
+CFLAGS += $(COPTIMIZE_FLAGS)
+CXXFLAGS += $(CXXOPTIMIZE_FLAGS)
+FFLAGS += $(FPPTIMIZE_FLAGS)
+LDFLAGS += $(OPTIMIZE)
+
+JEMALLOC_LIBS :=
+ifeq ($(LD_JEMALLOC),1)
+JEMALLOC_LIBS += -L$(RISCV)/lib -ljemalloc -lm -pthread
+endif
+
+### Rule (compile): a single `.c` -> `.o` (gcc)
+$(DST_DIR)/src/%.o: src/%.c
+	@mkdir -p $(dir $@) && echo + CC $<
+	@$(CC) $(CFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.C` -> `.o` (g++)
+$(DST_DIR)/src/%.o: src/%.C
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(CXX) $(CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.cc` -> `.o` (g++)
+$(DST_DIR)/src/%.o: src/%.cc
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(CXX) $(CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.cpp` -> `.o` (g++)
+$(DST_DIR)/src/%.o: src/%.cpp
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(CXX) $(CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.cxx` -> `.o` (g++)
+$(DST_DIR)/src/%.o: src/%.cxx
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(CXX) $(CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.f` -> `.o` (gfortran)
+$(DST_DIR)/src/%.o: src/%.f
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(FC) $(FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.fppized.f90` -> `.fppized.o` (gfortran)
+$(DST_DIR)/src/%.fppized.o: src/%.fppized.f90
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(FC) $(FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.fppized.f` -> `.fppized.o` (gfortran)
+$(DST_DIR)/src/%.fppized.o: src/%.fppized.f
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(FC) $(FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.f90` -> `.o` (gfortran)
+$(DST_DIR)/src/%.o: src/%.f90
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(FC) $(FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.F90` -> `.fppized.f90` (specpp)
+src/%.fppized.f90: src/%.F90
+	@echo + PREPARE $<
+	@cd $(dir $<) && ${SPEC}/bin/specperl ${SPEC}/bin/specpp $(SPECCPPFLAGS) -o $(abspath $@) $(abspath $<)
+
+### Rule (compile): a single `.F` -> `.fppized.f` (specpp)
+src/%.fppized.f: src/%.F
+	@echo + PREPARE $<
+	@cd $(dir $<) && ${SPEC}/bin/specperl ${SPEC}/bin/specpp $(SPECCPPFLAGS) -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.c` -> `.o` (gcc)
+$(HOST_DIR)/src/%.o: src/%.c
+	@mkdir -p $(dir $@) && echo + CC $<
+	@$(HOST_CC) $(HOST_CFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.C` -> `.o` (g++)
+$(HOST_DIR)/src/%.o: src/%.C
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(HOST_CXX) $(HOST_CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.cc` -> `.o` (g++)
+$(HOST_DIR)/src/%.o: src/%.cc
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(HOST_CXX) $(HOST_CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.cpp` -> `.o` (g++)
+$(HOST_DIR)/src/%.o: src/%.cpp
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(HOST_CXX) $(HOST_CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.cxx` -> `.o` (g++)
+$(HOST_DIR)/src/%.o: src/%.cxx
+	@mkdir -p $(dir $@) && echo + CXX $<
+	@$(HOST_CXX) $(HOST_CXXFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.f` -> `.o` (gfortran)
+$(HOST_DIR)/src/%.o: src/%.f
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(HOST_FC) $(HOST_FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.fppized.f90` -> `.fppized.o` (gfortran)
+$(HOST_DIR)/src/%.fppized.o: src/%.fppized.f90
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(HOST_FC) $(HOST_FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.fppized.f` -> `.fppized.o` (gfortran)
+$(HOST_DIR)/src/%.fppized.o: src/%.fppized.f
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(HOST_FC) $(HOST_FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+### Rule ((host)): a single `.f90` -> `.o` (gfortran)
+$(HOST_DIR)/src/%.o: src/%.f90
+	@mkdir -p $(dir $@) && echo + FC $<
+	@cd $(dir $<) && $(HOST_FC) $(HOST_FFLAGS) -c -o $(abspath $@) $(abspath $<)
+
+APP_REL = $(DST_DIR)/$(NAME)
+APP = $(abspath $(APP_REL))
+
+ifeq ($(MAKECMDGOALS),)
+  MAKECMDGOALS  = $(APP)
+  .DEFAULT_GOAL = $(APP)
+endif
+
+$(APP): $(PREPROCESS_OBJS) $(OBJS)
+	@echo + LD "->" $(APP_REL)
+	@$(LD) -o $(abspath $@) $(OBJS) $(LDFLAGS) $(JEMALLOC_LIBS)
+
+$(VALIDATOR): $(VALIDATOR_OBJS)
+	@echo + LD "->" $(VALIDATOR_REL)
+	@$(HOST_LD) -o $(abspath $@) $(VALIDATOR_OBJS) $(HOST_LDFLAGS)
+
+$(DATAPREPARE): $(DATAPREPARE_OBJS)
+	@echo + LD "->" $(DATAPREPARE_REL)
+	@$(HOST_LD) -o $(abspath $@) $(DATAPREPARE_OBJS) $(HOST_LDFLAGS)
+
+## 5. Miscellaneous
+
+.PHONY: clean-src
+clean-src:
+	@rm -rf ./src
+
+.PHONY: copy-src
+copy-src:
+	@cp -r $(SPEC)/benchspec/CPU/$(NAME)/src ./
+	@chmod -R +w src
+
+.PHONY: copy-data
+copy-data: $(DATAPREPARE)
+	@cp -r $(SPEC)/benchspec/CPU/$(NAME)/data ./
+	@! (stat prepare-data.sh > /dev/null 2> /dev/null) || bash prepare-data.sh $(DATAPREPARE) > /dev/null
+	@chmod -R +w data
+
+.PHONY: clean
+clean: clean_preprocess_objs
+	@rm -rf $(DST_DIR)
+
+.PHONY: clean-all
+clean-all: clean clean-src
+
+.PHONY: clean-logs
+clean-logs:
+	@rm -rf ./logs
+
+.PHONY: print_vars
+print_vars:
+	@echo "OBJS $(OBJS)"
+	@echo "PREPROCESS_OBJS $(PREPROCESS_OBJS)"
+

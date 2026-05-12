@@ -1,0 +1,233 @@
+NAME = 736.ocio_r
+SRCS = $(addprefix src/,ASWF-OpenColorIO/src/apps/ocioperf/main.cpp \
+	ASWF-OpenColorIO/src/apputils/strutil.cpp \
+	ASWF-OpenColorIO/src/apputils/logGuard.cpp \
+	ASWF-OpenColorIO/src/apputils/argparse.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/SonyCameras.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/RedCameras.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/PanasonicCameras.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/OpHelpers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/Displays.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/ColorMatrixHelpers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/CanonCameras.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/BuiltinTransformRegistry.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/ArriCameras.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/AppleCameras.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/builtins/ACES.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/RangeTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/MatrixTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/Lut3DTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/Lut1DTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/LookTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/LogTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/LogCameraTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/LogAffineTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/GroupTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/GradingToneTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/GradingRGBCurveTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/GradingPrimaryTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/FixedFunctionTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/FileTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/ExposureContrastTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/ExponentWithLinearTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/ExponentTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/DisplayViewTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/ColorSpaceTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/CDLTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/BuiltinTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/transforms/AllocationTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/reference/ReferenceOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/range/RangeOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/range/RangeOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/range/RangeOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/range/RangeOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/noop/NoOps.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/matrix/MatrixOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/matrix/MatrixOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/matrix/MatrixOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/matrix/MatrixOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut3d/Lut3DOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut3d/Lut3DOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut3d/Lut3DOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut3d/Lut3DOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut1d/Lut1DOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut1d/Lut1DOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut1d/Lut1DOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/lut1d/Lut1DOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/log/LogUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/log/LogOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/log/LogOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/log/LogOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/log/LogOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingtone/GradingToneOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingtone/GradingToneOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingtone/GradingToneOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingtone/GradingToneOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingtone/GradingTone.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingrgbcurve/GradingRGBCurveOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingrgbcurve/GradingRGBCurveOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingrgbcurve/GradingRGBCurveOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingrgbcurve/GradingRGBCurveOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingrgbcurve/GradingRGBCurve.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingrgbcurve/GradingBSplineCurve.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingprimary/GradingPrimaryOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingprimary/GradingPrimaryOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingprimary/GradingPrimaryOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingprimary/GradingPrimaryOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gradingprimary/GradingPrimary.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gamma/GammaOpUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gamma/GammaOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gamma/GammaOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gamma/GammaOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/gamma/GammaOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/fixedfunction/FixedFunctionOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/fixedfunction/FixedFunctionOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/fixedfunction/FixedFunctionOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/fixedfunction/FixedFunctionOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/exposurecontrast/ExposureContrastOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/exposurecontrast/ExposureContrastOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/exposurecontrast/ExposureContrastOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/exposurecontrast/ExposureContrastOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/exponent/ExponentOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/cdl/CDLOpGPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/cdl/CDLOpData.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/cdl/CDLOpCPU.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/cdl/CDLOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/allocation/AllocationOp.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ops/OpTools.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/xmlutils/XMLWriterUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/xmlutils/XMLReaderUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/xmlutils/XMLReaderHelper.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/ctf/IndexMapping.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/ctf/CTFTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/ctf/CTFReaderUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/ctf/CTFReaderHelper.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/cdl/CDLWriter.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/cdl/CDLReaderHelper.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/cdl/CDLParser.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FormatMetadata.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatVF.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatTruelight.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatSpiMtx.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatSpi3D.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatSpi1D.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatResolveCube.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatPandora.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatIridasLook.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatIridasItx.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatIridasCube.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatICC.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatHDL.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatDiscreet1DL.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatCTF.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatCSP.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatCDL.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatCCC.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormatCC.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/fileformats/FileFormat3DL.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/builtinconfigs/StudioConfig.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/builtinconfigs/CGConfig.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/builtinconfigs/BuiltinConfigRegistry.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/apphelpers/MixingHelpers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/apphelpers/LegacyViewingPipeline.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/apphelpers/DisplayViewHelpers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/apphelpers/ColorSpaceHelpers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/apphelpers/CategoryHelpers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ViewingRules.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ViewTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Transform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/SystemMonitor.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ScanlineHelper.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Processor.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Platform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/PathUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ParseUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/OpOptimizers.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Op.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/OCIOZArchive.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/OCIOYaml.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/NamedTransform.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/MathUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/LookParse.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Look.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Logging.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ImagePacking.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ImageDesc.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/HashUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/GpuShaderUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/GpuShaderDesc.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/GpuShaderClassWrapper.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/GpuShader.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/GPUProcessor.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/FileRules.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Exception.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/DynamicProperty.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Display.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ContextVariableUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Context.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ConfigUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Config.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ColorSpaceSet.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/ColorSpace.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Caching.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/CPUProcessor.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/CPUInfo.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/BitDepthUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/BakingUtils.cpp \
+	ASWF-OpenColorIO/src/OpenColorIO/Baker.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/tag.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/stream.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/singledocparser.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/simplekey.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/scantoken.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/scantag.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/scanscalar.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/scanner.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/regex_yaml.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/parser.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/parse.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/ostream_wrapper.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/null.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/nodeevents.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/nodebuilder.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/node_data.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/node.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/memory.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/exp.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/exceptions.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/emitterutils.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/emitterstate.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/emitter.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/emitfromevents.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/emit.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/directives.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/depthguard.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/convert.cpp \
+	ASWF-OpenColorIO/ext/yaml-cpp/src/binary.cpp \
+	ASWF-OpenColorIO/ext/pystring/pystring.cpp \
+	ASWF-OpenColorIO/ext/libexpat/xmltok.cpp \
+	ASWF-OpenColorIO/ext/libexpat/xmlrole.cpp \
+	ASWF-OpenColorIO/ext/libexpat/xmlparse.cpp)
+SPEC_CFLAGS += -DSPEC_AUTO_BYTEORDER=0x12345678 -DSPEC_AUTO_SUPPRESS_THREADING -DOCIO_HEADLESS_ENABLED -Isrc/ASWF-OpenColorIO/include -Isrc/ASWF-OpenColorIO/src -Isrc/ASWF-OpenColorIO/src/OpenColorIO -Isrc/ASWF-OpenColorIO/ext/dist/include -Isrc/ASWF-OpenColorIO/ext/sampleicc/src/include
+SPEC_CXXFLAGS += 
+SPEC_FFLAGS += 
+SPEC_LDFLAGS += 
+LD_CXX = 1
+include ../Makefile.apps
+include ../Makefile.run
+.PHONY: clean_preprocess_objs
+clean_preprocess_objs:
+
+refrate-cmp:
+	$(call SPECDIFF, --abstol 0.000003, $(RUN_DIR)/perf_aces_to_video_with_look.clf.out, data/refrate/output/perf_aces_to_video_with_look.clf.out)
+	$(call SPECDIFF, --abstol 0.000002, $(RUN_DIR)/perf_heavy_transform.clf.out, data/refrate/output/perf_heavy_transform.clf.out)
+	$(call SPECDIFF, --abstol 2, $(RUN_DIR)/perf_lut1d_halfdom.ctf.out, data/refrate/output/perf_lut1d_halfdom.ctf.out)
+	$(call SPECDIFF, --abstol 0.000016, $(RUN_DIR)/perf_mntr_srgb_identity.ctf.out, data/refrate/output/perf_mntr_srgb_identity.ctf.out)
+train-cmp:
+	$(call SPECDIFF, --abstol 0.000003, $(RUN_DIR)/perf_aces_to_video_with_look.clf.out, data/train/output/perf_aces_to_video_with_look.clf.out)
+	$(call SPECDIFF, --abstol 0.000002, $(RUN_DIR)/perf_heavy_transform.clf.out, data/train/output/perf_heavy_transform.clf.out)
+	$(call SPECDIFF, --abstol 1, $(RUN_DIR)/perf_lut1d_long.clf.out, data/train/output/perf_lut1d_long.clf.out)
+	$(call SPECDIFF, --abstol 0.000016, $(RUN_DIR)/perf_metadata.ctf.out, data/train/output/perf_metadata.ctf.out)
+test-cmp:
+	$(call SPECDIFF, --abstol 0.000016, $(RUN_DIR)/perf_metadata.ctf.out, data/test/output/perf_metadata.ctf.out)

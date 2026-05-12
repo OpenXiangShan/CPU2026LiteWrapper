@@ -1,0 +1,2 @@
+$APP --force lua-5.4.7/lcode.c --enable=all --checkers-report=lcode_report.txt --output-file=lcode_bogey.txt --suppress=missingIncludeSystem --platform=unix64 > cppcheck_r.lcode_bogey.out 2> cppcheck_r.lcode_bogey.err
+$APP --force automaticMeshSizeField.cpp meshGRegionBoundaryLayer.cpp meshGRegionLocalMeshMod.cpp --enable=all --checkers-report=mesh_report.txt --output-file=mesh_bogey.txt --enable=all --suppress=missingIncludeSystem --suppress=missingInclude --check-level=exhaustive --platform=unix64 > cppcheck_r.mesh_bogey.out 2> cppcheck_r.mesh_bogey.err

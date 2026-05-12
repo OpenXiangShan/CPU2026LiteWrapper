@@ -1,0 +1,1 @@
+$APP --stats-file=synthetic_traffic.py_LinearGenerator_100.stats.txt synthetic_traffic.py LinearGenerator 100 > synthetic_traffic.py_LinearGenerator_100.out 2> synthetic_traffic.py_LinearGenerator_100.err

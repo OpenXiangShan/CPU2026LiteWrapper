@@ -1,0 +1,4 @@
+$APP --spec-validation-offset 20 --spec-validation-stride 3 --spec-validation-pixels 128 --bitdepths ui16 f32 --iter 99 --test 0 --transform ctf/metadata.ctf > perf_metadata.ctf.out 2> perf_metadata.ctf.err
+$APP --spec-validation-offset 30 --spec-validation-stride 5 --spec-validation-pixels 129 --bitdepths f32 f32 --iter 30 --test 0 --transform clf/aces_to_video_with_look.clf > perf_aces_to_video_with_look.clf.out 2> perf_aces_to_video_with_look.clf.err
+$APP --spec-validation-offset 40 --spec-validation-stride 7 --spec-validation-pixels 130 --bitdepths ui16 ui16 --iter 22 --8kres --test -1 --transform clf/lut1d_long.clf > perf_lut1d_long.clf.out 2> perf_lut1d_long.clf.err
+$APP --spec-validation-offset 50 --spec-validation-stride 9 --spec-validation-pixels 131 --bitdepths ui16 ui16 --iter 2 --8kres --test -1 --transform clf/heavy_transform.clf > perf_heavy_transform.clf.out 2> perf_heavy_transform.clf.err

@@ -1,0 +1,10 @@
+$APP -f randomMesh.ini -c General > omnetpp.General-0.out 2> omnetpp.General-0.err
+$APP -f queuenet.ini -c OneFifo > omnetpp.OneFifo-0.out 2> omnetpp.OneFifo-0.err
+$APP -f queuenet.ini -c TandemFifos > omnetpp.TandemFifos-0.out 2> omnetpp.TandemFifos-0.err
+$APP -f queuenet.ini -c SmallCQN > omnetpp.SmallCQN-0.out 2> omnetpp.SmallCQN-0.err
+$APP -f queuenet.ini -c Ring > omnetpp.Ring-0.out 2> omnetpp.Ring-0.err
+$APP -f queuenet.ini -c Terminal > omnetpp.Terminal-0.out 2> omnetpp.Terminal-0.err
+$APP -f queuenet.ini -c CallCenter > omnetpp.CallCenter-0.out 2> omnetpp.CallCenter-0.err
+$APP -f queuenet.ini -c ForkJoin > omnetpp.ForkJoin-0.out 2> omnetpp.ForkJoin-0.err
+$APP -f queuenet.ini -c ResourceAllocation > omnetpp.ResourceAllocation-0.out 2> omnetpp.ResourceAllocation-0.err
+$APP -f queuenet.ini -c AllocDealloc > omnetpp.AllocDealloc-0.out 2> omnetpp.AllocDealloc-0.err

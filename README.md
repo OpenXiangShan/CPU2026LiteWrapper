@@ -100,7 +100,7 @@ Some Fortran benchmarks (e.g. 765.roms_r) may require `ulimit -s unlimited` befo
 
 # Note for femflow
 
-The 766.femflow_r benchmark has many large `inline` functions, but compiler may not inline them due to the cost model. We recommand adding `-DSPEC_INLINE_POLICY=LOOSE` to the CFLAGS when compiling femflow to make `inline` functions to be inlined more aggressively, which can significantly improve the performance in some cost models (e.g. GCC-16 with -O3 on x86-64). You can use `patch -p1 < patches/optional/766-femflow-inline.patch` to enable this.
+The 766.femflow_r benchmark has many large `inline` functions, but compiler may not inline them due to the cost model. We recommand adding `-DSPEC_INLINE_POLICY=SPEC_INLINE_LOOSE` to the CFLAGS when compiling femflow to make `inline` functions to be inlined more aggressively, which can significantly improve the performance in some cost models (e.g. GCC-16 with -O3 on x86-64). You can use `patch -p1 < patches/optional/766-femflow-inline.patch` to enable this.
 
 # Note for lbm on AMD Zen 5 with GCC 16
 

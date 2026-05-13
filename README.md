@@ -104,7 +104,7 @@ The 766.femflow_r benchmark has many large `inline` functions, but compiler may 
 
 # Note for lbm on AMD Zen 5 with GCC 16
 
-We discovered 782.lbm_r may have 2x performance difference on AMD Zen 5 depending on PC alignment. When comparing the performance of AMD Zen 5 with other CPUs using GCC-16 with `-O3`. It's recommand to use `patch -p1 <patches/optional/782-lbm-zen5-prefetch-conflict.patch` to avoid the prefetch conflict issue which can cause significant performance degradation. For other compilers or different flags on Zen 5, the align issue may be different and need further manual tuning.
+We discovered 782.lbm_r may have 2x performance difference on AMD Zen 5 depending on PC alignment. When comparing the performance of AMD Zen 5 with other CPUs using GCC-16 with `-O3 -march=x86-64-v4`. It's recommand to use `patch -p1 <patches/optional/782-lbm-zen5-prefetch-conflict.patch` to avoid the prefetch conflict issue which can cause significant performance degradation. For other compilers or different flags on Zen 5, the align issue may be different and need further manual tuning.
 
 # Reference
 - https://github.com/OpenXiangShan/CPU2006LiteWrapper

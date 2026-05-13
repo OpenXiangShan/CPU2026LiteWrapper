@@ -1,0 +1,25 @@
+--- a/782.lbm_r/src/lbm.c
++++ b/782.lbm_r/src/lbm.c
+@@ -263,7 +263,22 @@
+ }
+ 
+ 
++#ifdef __x86_64__
++/* Workaround for an AMD Zen5 prefetcher conflict in this kernel with GCC-16 -O3:
++ * the prefetcher hashes the load PC, and the hot stencil loads inside this
++ * function thrash a tracker entry whenever they fall in the 256 B band
++ * [0xC0 .. 0x1BF] (mod 512), causing ~11x more demand DRAM fills and roughly
++ * doubling wall-clock time. Aligning the function entry to 512 B and pushing
++ * the loop body 0x100 bytes further inside lands every hot load in the
++ * "good" 256 B band [0x1C0 .. 0xBF] (mod 512). The NOP sled executes once
++ * per call (not per cell), so the runtime cost is negligible.
++ */
++__attribute__((aligned(512)))
++#endif
+ void LBM_performStreamCollideTRT( LBM_Grid srcGrid, LBM_Grid dstGrid ) {
++#ifdef __x86_64__
++	__asm__ volatile (".skip 0x100, 0x90");
++#endif
+ 	SWEEP_VAR
+ 
+ 	double ux, uy, uz, u2, rho;

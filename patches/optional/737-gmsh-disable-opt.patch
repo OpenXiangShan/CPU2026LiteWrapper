@@ -1,0 +1,11 @@
+--- a/737.gmsh_r/Makefile
++++ b/737.gmsh_r/Makefile
+@@ -346,7 +346,7 @@ SRCS = $(addprefix src/,gmsh/src/geo/GFace.cpp \
+ 	gmsh/src/parser/Gmsh.tab.cpp \
+ 	gmsh/src/parser/Gmsh.yy.cpp \
+ 	specrand/specrand.c)
+-SPEC_CFLAGS += -DSPEC_AUTO_SUPPRESS_THREADING -DSPEC_AUTO_BYTEORDER=0x12345678 -DNO_PARALLEL_THREADS -Isrc/specrand -Isrc/spec_restrict -Isrc/spec_inline_control -Isrc/gmsh/contrib/hxt/tetMesh/include -Isrc/gmsh/contrib/hxt/tetBR/include -Isrc/gmsh/contrib/hxt/predicates/include -Isrc/gmsh/contrib/hxt/core/include -Isrc/gmsh/contrib/eigen -Isrc/gmsh/contrib/ALGLIB -Isrc/gmsh/contrib/HighOrderMeshOptimizer -Isrc/gmsh/contrib/MeshOptimizer -Isrc/gmsh/contrib/MeshQualityOptimizer -Isrc/gmsh/contrib/QuadTri -Isrc/gmsh/contrib/Netgen -Isrc/gmsh/contrib/Netgen/libsrc/include -Isrc/gmsh/contrib/Netgen/nglib -Isrc/gmsh/src/common -Isrc/gmsh/src/geo -Isrc/gmsh/src/mesh -Isrc/gmsh/src/numeric -Isrc/gmsh/src/parser -Isrc/gmsh/api -fno-fast-math
++SPEC_CFLAGS += -DSPEC_AUTO_SUPPRESS_THREADING -DSPEC_AUTO_BYTEORDER=0x12345678 -DNO_PARALLEL_THREADS -Isrc/specrand -Isrc/spec_restrict -Isrc/spec_inline_control -Isrc/gmsh/contrib/hxt/tetMesh/include -Isrc/gmsh/contrib/hxt/tetBR/include -Isrc/gmsh/contrib/hxt/predicates/include -Isrc/gmsh/contrib/hxt/core/include -Isrc/gmsh/contrib/eigen -Isrc/gmsh/contrib/ALGLIB -Isrc/gmsh/contrib/HighOrderMeshOptimizer -Isrc/gmsh/contrib/MeshOptimizer -Isrc/gmsh/contrib/MeshQualityOptimizer -Isrc/gmsh/contrib/QuadTri -Isrc/gmsh/contrib/Netgen -Isrc/gmsh/contrib/Netgen/libsrc/include -Isrc/gmsh/contrib/Netgen/nglib -Isrc/gmsh/src/common -Isrc/gmsh/src/geo -Isrc/gmsh/src/mesh -Isrc/gmsh/src/numeric -Isrc/gmsh/src/parser -Isrc/gmsh/api -fno-fast-math -ffp-contract=off
+ SPEC_CXXFLAGS += 
+ SPEC_FFLAGS += 
+ SPEC_LDFLAGS += -lm

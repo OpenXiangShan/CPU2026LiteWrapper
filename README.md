@@ -98,6 +98,17 @@ make ARCH=riscv64 RUN_TAG=-run2 run-int-test
 
 Some Fortran benchmarks (e.g. 765.roms_r) may require `ulimit -s unlimited` before running to avoid stack overflow, especially when compiled with LLVM's `flang-new`.
 
+# Note for gmsh
+
+The 737.gmsh_r benchmark bundles Shewchuk's robust geometric predicates (`predicates.c`),
+which depend on the exact two-step rounding of `a*b+c`. Whenever the target exposes FMA
+(e.g. `-march=x86-64-v3`, `-march=x86-64-v4`), GCC-16 contracts those expressions into a
+single fused-multiply-add and breaks the round-off tracking — typical symptoms are a
+segmentation fault on `data/refrate/input/gasdis.geo` and a non-terminating run on
+`Torus.geo`. The Makefile compiles only `predicates.c` with `-ffp-contract=off` to
+preserve the algorithm's preconditions; perf impact on the rest of the benchmark is
+nil (measured < 0.5% on the train workload on Zen3, Zen5 and Raptor Lake). You can use `patch -p1 < patches/optional/737-gmsh-disable-opt.patch` to enable this.
+
 # Note for femflow
 
 The 766.femflow_r benchmark has many large `inline` functions, but compiler may not inline them due to the cost model. We recommand adding `-DSPEC_INLINE_POLICY=SPEC_INLINE_LOOSE` to the CFLAGS when compiling femflow to make `inline` functions to be inlined more aggressively, which can significantly improve the performance in some cost models (e.g. GCC-16 with -O3 on x86-64). You can use `patch -p1 < patches/optional/766-femflow-inline.patch` to enable this.

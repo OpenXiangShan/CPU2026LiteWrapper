@@ -1,0 +1,16 @@
+--- a/731.astcenc_r/src/astcenc_find_best_partitioning.cpp
++++ b/731.astcenc_r/src/astcenc_find_best_partitioning.cpp
+@@ -587,11 +587,11 @@
+ 
+ 	// Partitioning errors assuming uncorrelated-chrominance endpoints
+ 	float uncor_best_errors[TUNE_MAX_PARTITIONING_CANDIDATES];
+-	unsigned int uncor_best_partitions[TUNE_MAX_PARTITIONING_CANDIDATES];
++	unsigned int uncor_best_partitions[TUNE_MAX_PARTITIONING_CANDIDATES] = {};
+ 
+ 	// Partitioning errors assuming same-chrominance endpoints
+ 	float samec_best_errors[TUNE_MAX_PARTITIONING_CANDIDATES];
+-	unsigned int samec_best_partitions[TUNE_MAX_PARTITIONING_CANDIDATES];
++	unsigned int samec_best_partitions[TUNE_MAX_PARTITIONING_CANDIDATES] = {};
+ 
+ 	for (unsigned int i = 0; i < requested_candidates; i++)
+ 	{

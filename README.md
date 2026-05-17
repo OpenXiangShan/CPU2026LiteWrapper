@@ -98,6 +98,10 @@ make ARCH=riscv64 RUN_TAG=-run2 run-int-test
 
 Some Fortran benchmarks (e.g. 765.roms_r) may require `ulimit -s unlimited` before running to avoid stack overflow, especially when compiled with LLVM's `flang-new`.
 
+# Note for astcenc
+
+The 731.astcenc_r benchmark has a uninitialized variable on the stack which can cause non-deterministic behavior and runtime SIGSEGV on some platforms with some compilers (e.g. GCC-16 on x86-64). You can use `patch -p1 < patches/optional/731-astcenc-init-partitions.patch` to avoid this issue.
+
 # Note for gmsh
 
 The 737.gmsh_r benchmark bundles Shewchuk's robust geometric predicates (`predicates.c`),

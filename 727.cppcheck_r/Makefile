@@ -108,6 +108,96 @@ include ../Makefile.run
 .PHONY: clean_preprocess_objs
 clean_preprocess_objs:
 
+TESTRUNNER_SRCS = $(filter-out src/cli/main.cpp,$(SRCS)) $(addprefix src/,test/options.cpp \
+	test/fixture.cpp \
+	test/helpers.cpp \
+	test/testcheck.cpp \
+	test/testcolor.cpp \
+	test/testsettings.cpp \
+	test/testsingleexecutor.cpp \
+	test/test64bit.cpp \
+	test/testanalyzerinformation.cpp \
+	test/testassert.cpp \
+	test/testastutils.cpp \
+	test/testautovariables.cpp \
+	test/testbool.cpp \
+	test/testboost.cpp \
+	test/testbufferoverrun.cpp \
+	test/testcharvar.cpp \
+	test/testclangimport.cpp \
+	test/testclass.cpp \
+	test/testcmdlineparser.cpp \
+	test/testcondition.cpp \
+	test/testconstructors.cpp \
+	test/testcppcheck.cpp \
+	test/testerrorlogger.cpp \
+	test/testexceptionsafety.cpp \
+	test/testfilelister.cpp \
+	test/testfilesettings.cpp \
+	test/testfunctions.cpp \
+	test/testgarbage.cpp \
+	test/testimportproject.cpp \
+	test/testincompletestatement.cpp \
+	test/testinternal.cpp \
+	test/testio.cpp \
+	test/testleakautovar.cpp \
+	test/testlibrary.cpp \
+	test/testmathlib.cpp \
+	test/testmemleak.cpp \
+	test/testnullpointer.cpp \
+	test/testoptions.cpp \
+	test/testother.cpp \
+	test/testpath.cpp \
+	test/testpathmatch.cpp \
+	test/testplatform.cpp \
+	test/testpostfixoperator.cpp \
+	test/testpreprocessor.cpp \
+	test/testprocessexecutor.cpp \
+	test/testprogrammemory.cpp \
+	test/testrunner.cpp \
+	test/testsimplifytemplate.cpp \
+	test/testsimplifytokens.cpp \
+	test/testsimplifytypedef.cpp \
+	test/testsimplifyusing.cpp \
+	test/testsizeof.cpp \
+	test/teststl.cpp \
+	test/teststring.cpp \
+	test/testsummaries.cpp \
+	test/testsuppressions.cpp \
+	test/testsymboldatabase.cpp \
+	test/testthreadexecutor.cpp \
+	test/testtimer.cpp \
+	test/testtoken.cpp \
+	test/testtokenize.cpp \
+	test/testtokenlist.cpp \
+	test/testtokenrange.cpp \
+	test/testtype.cpp \
+	test/testuninitvar.cpp \
+	test/testunusedfunctions.cpp \
+	test/testunusedprivfunc.cpp \
+	test/testunusedvar.cpp \
+	test/testutils.cpp \
+	test/testvaarg.cpp \
+	test/testvalueflow.cpp \
+	test/testvarid.cpp)
+TESTRUNNER_OBJS := $(patsubst %.F,%.fppized.o,$(TESTRUNNER_SRCS))
+TESTRUNNER_OBJS := $(patsubst %.F90,%.fppized.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.f90,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.f,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.c,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.C,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.cpp,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.cc,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(patsubst %.cxx,%.o,$(TESTRUNNER_OBJS))
+TESTRUNNER_OBJS := $(addprefix $(DST_DIR)/, $(TESTRUNNER_OBJS))
+TESTRUNNER = $(abspath $(DST_DIR)/testrunner_r)
+
+$(APP): $(TESTRUNNER)
+
+$(TESTRUNNER): $(TESTRUNNER_OBJS)
+	@echo + LD "->" $(notdir $@)
+	@$(LD) -o $(abspath $@) $(TESTRUNNER_OBJS) $(LDFLAGS) $(JEMALLOC_LIBS)
+
 refrate-cmp:
 	@for f in 738_bogey.txt 738_report.txt 747_bogey.txt 747_report.txt 770_bogey.txt 770_report.txt cppcheck_r.738_bogey.out cppcheck_r.747_bogey.out cppcheck_r.770_bogey.out; do \
 		$(DIFF) $(RUN_DIR)/$$f data/refrate/output/$$f; \
@@ -117,6 +207,6 @@ train-cmp:
 		$(DIFF) $(RUN_DIR)/$$f data/train/output/$$f; \
 	done
 test-cmp:
-	@for f in cppcheck_r.hello_bogey.out hello_bogey.txt; do \
+	@for f in cppcheck_r.hello_bogey.out hello_bogey.txt testrunner_r.out; do \
 		$(DIFF) $(RUN_DIR)/$$f data/test/output/$$f; \
 	done

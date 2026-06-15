@@ -159,10 +159,21 @@ def read_pm_file(benchmark):
     with open(pm_path, 'r') as f:
         return f.read()
 
+def get_extractor_path():
+    """Return the Perl metadata extractor path."""
+    candidates = [
+        os.path.join(WRAPPER_DIR, "scripts", "extract_sources.pl"),
+        os.path.join(WRAPPER_DIR, "extract_sources.pl"),
+    ]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+    return candidates[0]
+
 def extract_pm_flags(benchmark):
     """Extract flags and metadata via Perl evaluation of .pm file."""
     bench_path = os.path.join(BENCHSPEC, benchmark)
-    extractor = os.path.join(WRAPPER_DIR, "extract_sources.pl")
+    extractor = get_extractor_path()
     
     result_dict = {}
     try:
@@ -182,7 +193,7 @@ def extract_sources(pm_content, benchmark):
     """Extract source file list from .pm content using Perl evaluation."""
     # Use the Perl extractor for accurate source resolution
     bench_path = os.path.join(BENCHSPEC, benchmark) if benchmark else ""
-    extractor = os.path.join(WRAPPER_DIR, "extract_sources.pl")
+    extractor = get_extractor_path()
     
     if benchmark and os.path.isdir(bench_path) and os.path.isfile(extractor):
         try:
@@ -503,6 +514,8 @@ def generate_run_script(benchmark, pm_content, size):
             lines.append(f"$APP {infile} {opts} --sha512 -o {out}.ll > {out}.out 2> {out}.err")
     
     elif benchnum == '727':  # cppcheck_r - control file with --output-file
+        if size == 'test':
+            lines.append("${APP%727.cppcheck_r}testrunner_r > testrunner_r.out 2> testrunner_r.err")
         for cl in control_lines:
             # Perl: ($mark) = $line =~ /--output-file=(\S+)\.txt/
             match = re.search(r'--output-file=(\S+)\.txt', cl)
@@ -762,6 +775,12 @@ def generate_makefile(benchmark, pm_content):
                 fpp_files.append('src/' + s[:-2] + '.fppized.f')
         lines.append(f"\trm -f {' '.join(fpp_files)}")
     lines.append("")
+
+    if benchmark.startswith('727.') and multi_sources and 'testrunner_r' in multi_sources:
+        shared_sources = [s for s in multi_sources['testrunner_r'] if s in primary_sources]
+        test_sources = [s for s in multi_sources['testrunner_r'] if s not in shared_sources]
+        lines.extend(generate_extra_exe_block('testrunner_r', shared_sources, test_sources))
+        lines.append("")
     
     # Generate comparison targets
     for s in ['refrate', 'train', 'test']:
@@ -797,6 +816,39 @@ def generate_makefile(benchmark, pm_content):
             lines.append(f"\t@echo \"No output validation for {benchmark} ({s})\"")
     
     return "\n".join(lines) + "\n"
+
+def generate_extra_exe_block(exe_name, shared_sources, extra_sources):
+    """Generate a benchmark-local rule for an extra executable sharing common objects."""
+    var_prefix = 'TESTRUNNER' if exe_name == 'testrunner_r' else re.sub(r'[^A-Za-z0-9]', '_', exe_name).upper()
+    lines = []
+    if exe_name == 'testrunner_r' and shared_sources:
+        lines.append(f"{var_prefix}_SRCS = $(filter-out src/cli/main.cpp,$(SRCS))")
+    else:
+        filtered = " ".join(f"src/{s}" for s in shared_sources)
+        if filtered:
+            lines.append(f"{var_prefix}_SRCS = $(filter {filtered},$(SRCS))")
+        else:
+            lines.append(f"{var_prefix}_SRCS =")
+    if extra_sources:
+        lines[-1] += " $(addprefix src/," + format_source_list(extra_sources) + ")"
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.F,%.fppized.o,$({var_prefix}_SRCS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.F90,%.fppized.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.f90,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.f,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.c,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.C,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.cpp,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.cc,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(patsubst %.cxx,%.o,$({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix}_OBJS := $(addprefix $(DST_DIR)/, $({var_prefix}_OBJS))")
+    lines.append(f"{var_prefix} = $(abspath $(DST_DIR)/{exe_name})")
+    lines.append("")
+    lines.append(f"$(APP): $({var_prefix})")
+    lines.append("")
+    lines.append(f"$({var_prefix}): $({var_prefix}_OBJS)")
+    lines.append("\t@echo + LD \"->\" $(notdir $@)")
+    lines.append(f"\t@$(LD) -o $(abspath $@) $({var_prefix}_OBJS) $(LDFLAGS) $(JEMALLOC_LIBS)")
+    return lines
 
 def format_source_list(sources):
     """Format a source list for Makefile."""
